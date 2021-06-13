@@ -1,0 +1,88 @@
+README <DoodleJump>
+
+HANDIN: final
+
+DESIGN CHOICES
+
+This is an imitation of the famous phone manager Doodle Jump, using JavaFx.
+The player can control the "Doodle" to move left or right on the screen to
+continuously bounce on the platforms to go up. As the doodle goes up,
+score is accumulated. As scores go up, difficulty level also changes;
+fewer platforms are generated and different types of platforms appear.
+Below are the detailed functionality and how they are designed in terms of
+object-oriented programming.
+
+Functionality:
+
+  1. Doodle: A separate doodle class is made to control both the x and y
+  positions of the doodle. It contains a rectangle, set with the image of
+  Doodler from the original manager.
+
+  2. KeyBoard Interaction: A separate KeyBoard Handler (privately contained in
+  Game class) is created so that the doodle can move left or right.
+
+  3. Platforms: A separate Platform class is made to represent a single block
+  of platform, which the doodle will bounce off from. In order to implement
+  the manager, the following elements were used.
+    - ArrayList: An ArrayList of Platforms is instantiated in the Game class
+      to collect all the platforms into one data structure. Each newly generated
+      platform has a position based on the previous platform.
+    - Semi-Randomness: And that position is decided semi-randomly. There are
+      two constants for each x and y, so that determine the range of position
+      this new platform will take from the previous platform. However, I made
+      the minimum y distance to grow larger as the difficulty level goes up,
+      so that it is harder to play the manager (but it is still doable).
+  4. Timeline: A Timeline class is called within the manager class to control
+  the whole flow of this manager. For each time frame, below codes are called.
+    - Physics: The doodle falls down based on the actual physics of gravity.
+      Using each keyframe's continuation as the "time" variable, the velocity
+      and the distance of the doodle is determined
+    - Bounce: Using the shape's intersect() method, when each platform intersects
+      with the doodle, the doodle bounces off. I particularly made the limit
+      of intersection to be 0 for the y position, so that the doodle would not
+      bounce off a platform when the doodle did not actually landed on it.
+    - Scroll Down: To make the graphical effect of doodle climbing up, the
+      platforms go down as much as the doodle goes up.
+      - New Platform Generation: To continue the manager, new platforms are
+        generated. Using the semi-randomness explained above, platforms are
+        generated to be playable.
+    - Game Over: When the doodle falls under the screen, the timeline is stopped
+      and manager over pane is shown.
+  5. Display
+    - Start Pane: In the start pane, you have the start button to start the Game
+      This was intended so that requesting focus on the manager pane will be called
+      after the stage is shown. When the start button is pressed, timeline starts.
+    - Score Pane: The score pane is semi-transparent, and do not disappear
+      even if the manager is over. This is to show the final score after the manager
+      is finished.
+    - Game Pane: Game pane contains all the manager elements.
+    - Game Over Pane: This is called when manager is over.
+
+KNOWN BUGS: N/A
+
+EXTRA CREDIT
+
+These are the extra credits listed.
+
+1. Score: The score is updated when the doodle climbs up. It uses this distance
+   that the doodle travelled and calculates the score from it.
+  - Difficulty level: For each 5000 points gained, difficulty level increases
+    by 1. And for each difficulty level change, the distance between the Platforms
+    increase so that the manager is harder. For the final level, the Platforms
+    are very far and very hard to play the manager.
+  - Different types of Platforms: As the level goes up, different kinds of Platforms
+    come up as well. Level 2 introduces breaking platform, Level 3 moving, Level 4
+    high-jump.
+  - Score board: On the manager over pane, score board is made so that when you
+    play the manager again, it will sort out the highest manager score achieved.
+    You can use this to compete with other friends.
+2. Restart Button: The manager over pane contains a restart button that sets up
+   all the elements to the default and restarts the timeline from start.
+3. Smooth KeyBoard Interaction: I used velocity element to be incorporated
+   into keyboard movement, so that during the time the key is pressed,
+   the doodle will move incrementally with a constant velocity. This creates
+   the graphical effect of moving smoothly, unlike the original discrete
+   movements for each press of button.
+4. WrapAround: To make the manager more playable, I made the doodle to move across
+   the borders of the screen. If the doodle moves too far right or too far left,
+   it appears from the other side of the screen. 

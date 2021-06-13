@@ -1,0 +1,126 @@
+README <Tetris>
+
+HANDIN: final
+
+DESIGN CHOICES
+
+This package is a java version of the famous manager Tetris. The package contains
+8 classes, listed by the order of its containment:
+App, PaneOrganizer, Game, Control, Board, Piece, Block, and Constants.
+The following explanation is how these classes are implemented, categorized
+by the functionality of this GUI.
+
+Functionality:
+
+1. Piece generation: (Classes: Block, Piece, Control)
+  ● The seven pieces should be randomly generated:
+    Each piece is represented by a 4x2 array, as all pieces have 4 blocks,
+    but each block has unique arrangement of x and y. This data is then
+    used in the Piece class to arrange the Block class, which is a subclass
+    of built-in JavaFX Shape Rectangle class (Block class has two unique
+    methods of setCol and setRow, which is similar to setX and setY).
+    Control class then uses general factory pattern through switch statement,
+    creating random piece each time a method is called.
+
+2. Piece incremental drop (Classes: Game, Board, Piece)
+  ● Random piece should appear and move down the screen, one square at a time.
+    There are two kinds of moves that a piece can take. They include:
+    ○ Transitional movement
+    ○ Rotational movement
+    And Transitial movement can further split to:
+      ● Move down
+      ● Move left or right
+    For all of these kinds of movements, one method of checking the validity
+    of this movement is used. We make sure that the Tetris board, created by
+    20x10 array of Blocks, is "filled" by a node if a Piece is settled there.
+    If not, the corresponding Block in the Board is null, so if all Blocks of
+    a Piece is valid to move to null spaces, this move is valid.
+    This setting includes the borders: left, right, and the bottom. This then
+    led me to create several methods in the Piece class to be very efficient:
+    One setLocation method for a Piece, and all of movements, Transitional or
+    Rotational, could use this method.
+  The incremental drop then uses this setting with a Timeline included in the
+  Game class, and softDrop method is called per keyframe.
+
+3. Piece stop and update of new piece (Classes: Game, Board, Piece)
+  ● Pieces should stop moving when they can fall no further; a new randomly
+    generated piece should then appear at the top and fall down the screen.
+  In the Piece class, the softDrop method alters the Piece's status variable
+  into true or false based on whether it can move further down or not. If it is
+  false, the piece's shape is incorporated into the Board, filling in the
+  corresponding null space of the Board. Then, the Game class keeps track of
+  this, and generates a new piece.
+
+4. Line clear (Classes: Board)
+  ● When a row is full, it should be cleared and every row above
+    it should move down.
+  As the Board class keeps track of which space is null or not, it also checks
+  whether a full row happens or not. A simple algorithm to check each row,
+  delete row if full, and take down all rows above is implemented.
+
+5. Keyboard Input (Classes: PaneOrganizer, Game, Piece)
+  ● User input summary:
+    ○ Pressing the left and right arrow keys:
+      With the above-explained moveValid and setLocation, we simply increment
+      the Piece into left or right. This is implemented in Piece class.
+    ○ Pressing the up arrow key:
+      Rotation also uses the same setLocation and moveValid. moveValid method
+      however has a boolean argument that checks whether this movement is
+      transitional or rotational. If rotational, it calculates the potential
+      locations using the mathematical formula of setting up a rotation.
+    ○ Pressing the down arrow key:
+      This uses the same method of softDrop in the Timeline.
+    ○ Pressing the spacebar:
+      hardDrop method is implemented, using while loop and softDrop.
+    ○ Pressing the ‘p’ key:
+      P key makes the pausePane appear. The root layout of this app is a
+      StackPane, so we take up a Pane that we want to show. When we pause,
+      the pausePane shows up, KeyHandler is disabled, and timeline is stopped.
+      Opposite happens when P is pressed again.
+
+6. Game Over (Classes: PaneOrganizer, Game)
+  ● When a piece is in the top row of the board or a new piece appears
+    and has no room to fall, the manager is over. Text should be displayed to
+    alert the user, and the piece should no longer move either due to a
+    timeline or due to key input.
+  Similar to the Pause functionality, if manager is over, the gameOverPane is
+  shown. The Board class has the method to check if it is valid to call
+  manager over or not, as we have two cases: new piece cannot fall, or top row
+  is full. Board class is apt to check this as it keeps track of the nodes.
+
+7. Quit Button (Classes: PaneOrganizer)
+  ● A quit button is made.
+
+KNOWN BUGS: N/A
+
+EXTRA CREDIT
+
+These are the extra credits listed.
+
+1. Score and Level: When lines are cleared, the lines cleared at the moment
+  are counted. Based on this number, a score is calculated. For each 10 lines
+  cleared, a level is increased as well. These calculations are done in Control
+  class, and is shown on the right side of the screen.
+  When the level is increased, the speed of the timeline is increased.
+  This makes the manager harder, as the player has less time to decide how to
+  put the piece to the board.
+
+2. Restart Button: When manager over is called, the gameOverPane contains a
+  Restart button to setup a new manager. However, the score of the previous games
+  played are still kept, and in order from the highest to the lowest. These
+  features are implemented in PaneOrganizer class, as they are mostly graphical.
+
+3. Hold: During the play of the manager, if C is pressed, you can hold the
+  current piece and get a new one. If you are already holding a piece, you
+  can swap the already held piece with the current one. To enable this feature,
+  some addtional methods in the Piece class, as creating a copy of the Piece.
+  As setting the location of the Blocks is based on the Board null spaces,
+  if we want to graphically add a shape of a Piece, we would have to copy
+  the literal graphical nodes, create a Group based on them, and add this
+  to the pane.
+
+4. Next: Next section shows the next three pieces to be coming up. This
+  feature is also done through addCopy method used for Hold. Additionally,
+  Game class contains an Array with length of 3, that contains three Pieces.
+  For every update of a new piece, this array is updated, and Control class
+  gets the current version of Array and graphically shows the Pieces.

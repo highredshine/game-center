@@ -1,4 +1,4 @@
-package io.github.juatho;
+package io.github.juatho.Tetris;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -17,10 +17,11 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-    	GameOrganizer organizer = new GameOrganizer();
+        // Create top-level object, set up the scene, and show the stage here.
+    	Tetris organizer = new Tetris();
     	Scene scene = new Scene(organizer.getRoot());
     	stage.setScene(scene);
-    	stage.setTitle("Game Center");
+    	stage.setTitle("Tetris");
     	stage.show();
     }
 

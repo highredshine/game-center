@@ -1,1 +1,1 @@
-# game-center
+# manager-center
